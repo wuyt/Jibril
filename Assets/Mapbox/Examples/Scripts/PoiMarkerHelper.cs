@@ -11,6 +11,8 @@
 		public void Set(Dictionary<string, object> props)
 		{
 			_props = props;
+            _props.TryGetValue("Name", out var value);
+            Debug.Log(value);
 		}
 
 		void OnMouseUpAsButton()
