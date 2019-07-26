@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Jibril
@@ -81,7 +82,22 @@ namespace Jibril
         }
         #endregion
 
-        #region ARCoreTest
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                int index = SceneManager.GetActiveScene().buildIndex;
+                if (index > 3)
+                {
+                    SceneManager.LoadScene("Map");
+                }else if (index == 3)
+                {
+                    SceneManager.LoadScene("Settings");
+                }
+            }
+        }
+
+        #region Loading
         /// <summary>
         /// Loading场景结束时需要加载的场景
         /// </summary>
@@ -96,7 +112,9 @@ namespace Jibril
             }
             return sceneName;
         }
+        #endregion
 
+        #region ARCoreTest
         /// <summary>
         /// ARCore支持
         /// </summary>
@@ -108,12 +126,13 @@ namespace Jibril
         }
         #endregion
 
-
+        #region Settings
         /// <summary>
         /// 应用退出
         /// </summary>
         public void AppExit()
         {
+            PlayerPrefs.SetInt("SupportARCore", -2);//测试用
             Application.Quit();
         }
         /// <summary>
@@ -123,7 +142,7 @@ namespace Jibril
         public bool IsSupportARCore()
         {
             int isSupport = PlayerPrefs.GetInt("SupportARCore", -1);
-            if (isSupport ==1)
+            if (isSupport == 1)
             {
                 return true;
             }
@@ -135,13 +154,13 @@ namespace Jibril
         /// </summary>
         public string catchSceneName;
         /// <summary>
-        /// 抓捕场景设置
+        /// 随机宠物位置信息
         /// </summary>
-        /// <param name="sceneName">抓捕场景名称</param>
-        public void SetCatchScene(string sceneName)
-        {
-            catchSceneName = sceneName;
-        }
+        public Vector2[] randomPositions;
+        /// <summary>
+        /// 是否初始化过
+        /// </summary>
+        public bool gameInitialization;
         /// <summary>
         /// 开始游戏
         /// </summary>
@@ -154,7 +173,7 @@ namespace Jibril
         /// </summary>
         /// <param name="distance">距离</param>
         /// <param name="number">数量</param>
-        public void StartGame(float distance,int number)
+        public void StartGame(float distance, int number)
         {
             InitializeGame(distance, number);
             StartGame();
@@ -166,18 +185,99 @@ namespace Jibril
         /// <param name="number">数量</param>
         private void InitializeGame(float distance, int number)
         {
-            //todo
+            randomPositions = new Vector2[number];
+            for(int i = 0; i < randomPositions.Length; i++)
+            {
+                randomPositions[i] = Random.insideUnitCircle * distance;
+            }
+        }
+        #endregion
+
+        #region Map
+        /// <summary>
+        /// 预置宠物
+        /// </summary>
+        private Dictionary<int, bool> presetPokemon = new Dictionary<int, bool>();
+        /// <summary>
+        /// 随机宠物
+        /// </summary>
+        private Dictionary<int, bool> randomPokemon = new Dictionary<int, bool>();
+        /// <summary>
+        /// 宠物ID
+        /// </summary>
+        public int pokemonID;
+        /// <summary>
+        /// 宠物类型
+        /// </summary>
+        public bool pokemonType;
+        /// <summary>
+        /// 宠物位置
+        /// </summary>
+        public Vector3 pokemonPosition;
+        /// <summary>
+        /// 随机宠物起始位置
+        /// </summary>
+        public Vector3 startPosition;
+        /// <summary>
+        /// 检查预置宠物
+        /// </summary>
+        /// <param name="id">宠物ID</param>
+        /// <returns>是否显示</returns>
+        public bool CheckPreset(int id)
+        {
+            if (id <= 0)
+            {
+                return false;
+            }
+
+            if (presetPokemon.ContainsKey(id))
+            {
+                presetPokemon.TryGetValue(id, out bool visiable);
+                return visiable;
+            }
+            else
+            {
+                presetPokemon.Add(id, true);
+                return true;
+            }
         }
         /// <summary>
-        /// 游戏初始化状态
+        /// 检查随机宠物
         /// </summary>
-        /// <returns>true：已经初始化；false：未初始化</returns>
-        public bool GameInitialization()
+        /// <param name="id">宠物ID</param>
+        /// <returns>是否显示</returns>
+        public bool CheckRandom(int id)
         {
-            //todo
-            return false;
-        }
+            if (id <= 0)
+            {
+                return false;
+            }
 
+            if (randomPokemon.ContainsKey(id))
+            {
+                randomPokemon.TryGetValue(id, out bool visiable);
+                return visiable;
+            }
+            else
+            {
+                randomPokemon.Add(id, true);
+                return true;
+            }
+        }
+        /// <summary>
+        /// 点击宠物
+        /// </summary>
+        /// <param name="clickedId">宠物ID</param>
+        /// <param name="clickedType">宠物类型</param>
+        /// <param name="position">宠物相对位置</param>
+        public void ClickedPokemon(int clickedId, bool clickedType,Vector3 position)
+        {
+            pokemonID = clickedId;
+            pokemonType = clickedType;
+            pokemonPosition = position;
+            SceneManager.LoadScene(catchSceneName);
+        }
+        #endregion
     }
 }
 

@@ -5,12 +5,20 @@ using Mapbox.Unity.Map;
 
 public class ttt : MonoBehaviour
 {
-    [SerializeField]
-    AbstractMap _map;
-    // Start is called before the first frame update
+    private Vector2[] randomPlace;
+
     void Start()
     {
-        _map.OnInitialized += Ined;
+        Debug.Log(randomPlace);
+
+        for(int i = 0; i < 5; i++)
+        {
+            Debug.Log(Random.insideUnitCircle * 5);
+        }
+
+
+
+
     }
 
     void Ined()

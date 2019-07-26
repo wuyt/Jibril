@@ -31,6 +31,7 @@ namespace Jibril
             slider = GetComponentInChildren<Slider>();
             text = GetComponentInChildren<Text>();
             value = slider.value;
+            UpdateTitle();
         }
         /// <summary>
         /// 更新标题

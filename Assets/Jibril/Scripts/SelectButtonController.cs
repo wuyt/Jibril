@@ -26,7 +26,7 @@ namespace Jibril
         /// </summary>
         private Button[] buttons;
 
-        void Start()
+        void Awake()
         {
             buttons = GetComponentsInChildren<Button>();
         }
@@ -59,7 +59,7 @@ namespace Jibril
         public void OnClicked(string key)
         {
             //遍历按钮
-            foreach(var btn in buttons)
+            foreach (var btn in buttons)
             {
                 //获取名称
                 string temp = btn.GetComponentInChildren<Text>().text;

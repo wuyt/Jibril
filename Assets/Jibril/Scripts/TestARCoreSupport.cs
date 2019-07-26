@@ -11,7 +11,7 @@ namespace Jibril
         void Start()
         {
             //2秒后再运行
-            Invoke("Test",2f);
+            Invoke("Test", 2f);
         }
         /// <summary>
         /// 测试
@@ -19,7 +19,11 @@ namespace Jibril
         private void Test()
         {
             int status = 1;
-            if (Session.Status.IsError())
+            if (Session.Status == SessionStatus.ErrorPermissionNotGranted)
+            {
+                status = 0;
+            }
+            else if (Session.Status.IsError())
             {
                 status = 0;
             }

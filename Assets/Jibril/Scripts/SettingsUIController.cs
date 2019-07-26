@@ -36,9 +36,10 @@ namespace Jibril
         /// 返回按钮
         /// </summary>
         public Button btnBack;
-        
-            
-        
+        /// <summary>
+        /// 选择按钮
+        /// </summary>
+        private SelectButtonController selectButton;
 
         /// <summary>
         /// 应用退出
@@ -48,19 +49,11 @@ namespace Jibril
             MainManager.Instance.AppExit();
         }
         /// <summary>
-        /// 选择按钮
-        /// </summary>
-        private SelectButtonController selectButton;
-
-
-
-
-        /// <summary>
         /// 返回
         /// </summary>
         public void Back()
         {
-            MainManager.Instance.SetCatchScene(selectButton.value);
+            MainManager.Instance.catchSceneName = selectButton.value;
             MainManager.Instance.StartGame();
         }
         /// <summary>
@@ -68,7 +61,7 @@ namespace Jibril
         /// </summary>
         public void Restart()
         {
-            MainManager.Instance.SetCatchScene(selectButton.value);
+            MainManager.Instance.catchSceneName = selectButton.value;
             MainManager.Instance.StartGame(
                 distance.value,
                 int.Parse(number.value.ToString()));
@@ -80,7 +73,6 @@ namespace Jibril
 
             //设置选择按钮
             selectButton = FindObjectOfType<SelectButtonController>();
-            Debug.Log(MainManager.Instance.IsSupportARCore());
             if (MainManager.Instance.IsSupportARCore())
             {
                 selectButton.OnClicked("ARCore");
@@ -91,12 +83,7 @@ namespace Jibril
                 selectButton.OnClicked("Normal");
             }
 
-            btnBack.interactable = MainManager.Instance.GameInitialization();
+            btnBack.interactable = MainManager.Instance.gameInitialization;
         }
-
-
-
     }
-
-
 }
