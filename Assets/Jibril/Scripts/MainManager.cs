@@ -132,7 +132,7 @@ namespace Jibril
         /// </summary>
         public void AppExit()
         {
-            PlayerPrefs.SetInt("SupportARCore", -2);//测试用
+            //PlayerPrefs.SetInt("SupportARCore", -2);//测试用
             Application.Quit();
         }
         /// <summary>
@@ -277,6 +277,49 @@ namespace Jibril
             pokemonPosition = position;
             SceneManager.LoadScene(catchSceneName);
         }
+        #endregion
+
+        #region Catch
+
+        /// <summary>
+        /// 更新宠物字典
+        /// </summary>
+        /// <param name="updateType">类型</param>
+        /// <param name="id">ID</param>
+        public void UpdatePokemon(bool updateType,int id)
+        {
+            if (updateType)
+            {
+                if (presetPokemon.ContainsKey(id))
+                {
+                    presetPokemon[id] = false;
+                }
+                else
+                {
+                    presetPokemon.Add(id, false);
+                }
+            }
+            else
+            {
+                if (randomPokemon.ContainsKey(id))
+                {
+                    randomPokemon[id] = false;
+                }
+                else
+                {
+                    randomPokemon.Add(id, false);
+                }
+
+            }
+        }
+        /// <summary>
+        /// 抓捕结束后逻辑处理
+        /// </summary>
+        public void CatchEnd()
+        {
+            SceneManager.LoadScene("Map");
+        }
+            
         #endregion
     }
 }

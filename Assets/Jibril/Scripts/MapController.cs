@@ -64,7 +64,7 @@ namespace Jibril
                 PokemonController pokemon = Instantiate<PokemonController>(prefab, randomPlace);
                 pokemon.pokemonID = i;
                 pokemon.pokemonType = false;
-                pokemon.transform.localPosition = 
+                pokemon.transform.localPosition =
                     new Vector3(randomPositions[i].x, 0f, randomPositions[i].y);
             }
         }
@@ -76,32 +76,49 @@ namespace Jibril
             //销毁时注销事件
             map.OnInitialized -= MapInitialized;
         }
-        /// <summary>
-        /// 点击宠物
-        /// </summary>
-        /// <param name="hitInfo">点击对象信息</param>
-        private void HitPokemon(RaycastHit hitInfo)
-        {
-            PokemonController pokemon = hitInfo.transform.GetComponent<PokemonController>();
-            if (pokemon.catching)
-            {
-                pokemon.transform.parent = player;
-                MainManager.Instance.ClickedPokemon(
-                    pokemon.pokemonID, 
-                    pokemon.pokemonType,
-                    pokemon.transform.localPosition);
-            }
-        }
 
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                int layerMask = 1 << 9;
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
+                if (Input.GetMouseButtonDown(0))
                 {
-                    HitPokemon(hitInfo);
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    HitPokemon(ray);
+                }
+            }
+            else if (Application.platform == RuntimePlatform.Android 
+                || Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                if (Input.touchCount == 1)
+                {
+                    if (Input.GetTouch(0).phase == TouchPhase.Began)
+                    {
+                        Ray ray = Camera.main.ScreenPointToRay(Input.touches[0].position);
+                        HitPokemon(ray);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 点击宠物
+        /// </summary>
+        /// <param name="ray">射线</param>
+        private void HitPokemon(Ray ray)
+        {
+            //指定Layer9
+            int layerMask = 1 << 9;
+            //如果射线碰到物体
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
+            {
+                PokemonController pokemon = hitInfo.transform.GetComponent<PokemonController>();
+                if (pokemon.catching)
+                {
+                    pokemon.transform.parent = player;
+                    MainManager.Instance.ClickedPokemon(
+                        pokemon.pokemonID,
+                        pokemon.pokemonType,
+                        pokemon.transform.localPosition);
                 }
             }
         }
